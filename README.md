@@ -1,5 +1,8 @@
 # WebSocketMessage
 
+เป็น Front End โปรเจค Chat ด้วย Socket.io
+ทำงานคู่กับ Back End โปรเจค NestJS ชื่อ web-socket
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.1.4.
 
 ## Development server
