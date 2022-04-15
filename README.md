@@ -1,4 +1,4 @@
-# WebSocketMessage
+# FrontEndChatSocketIO
 
 เป็น Front End โปรเจค Chat ด้วย Socket.io
 ทำงานคู่กับ Back End โปรเจค NestJS ชื่อ BackEndChatSocketIO
