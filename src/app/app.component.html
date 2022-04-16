@@ -1,24 +1,24 @@
 <ng-template [ngIf]="messageSocket.isIdentity" [ngIfElse]="loginView" #chatView>
-  <input
-    type="text"
-    placeholder="message to everyone"
-    (input)="messageSocket.broadcastTyping()"
-    [formControl]="messageControl"
-    (keydown.enter)="sendMessage()"
-  />
-  <button (click)="sendMessage()">send</button>
-  <div
-    *ngIf="messageControl.errors?.['required'] && messageControl.touched"
-    style="color: red"
-  >
-    insert message !
+  <div class="socket-messages" appMessageScrollContainer>
+    <div *ngFor="let senderMessage of messageSocket.messages$ | async">
+      <span> [{{ senderMessage.name }}] : </span
+      ><span> {{ senderMessage.message }}</span>
+    </div>
   </div>
-  <ng-container *ngIf="messageSocket.isTyping">
-    <span>{{ messageSocket.typingName }} is typing ... </span>
-  </ng-container>
-  <div *ngFor="let senderMessage of messageSocket.messages$ | async">
-    <span> {{ senderMessage.name }} : </span
-    ><span> {{ senderMessage.message }}</span>
+
+  <div>
+    <input
+      #messageInput
+      type="text"
+      placeholder="message to everyone"
+      (input)="messageSocket.broadcastTyping()"
+      [formControl]="messageControl"
+      (keydown.enter)="sendMessage()"
+    />
+    <button (click)="sendMessage()">send</button>
+    <ng-container *ngIf="messageSocket.isTyping">
+      <span>{{ messageSocket.typingName }} is typing... </span>
+    </ng-container>
   </div>
 </ng-template>
 

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MessageSocketService } from './message-socket.service';
 
@@ -9,6 +9,12 @@ import { MessageSocketService } from './message-socket.service';
   providers: [MessageSocketService],
 })
 export class AppComponent {
+  @ViewChild('messageInput', { static: false, read: ElementRef })
+  set inputMessageEl(el: ElementRef<HTMLElement>) {
+    if (el) {
+      el.nativeElement.focus();
+    }
+  }
   title = 'WebSocketMessage';
   joinNameControl = new FormControl('', Validators.required);
   messageControl = new FormControl('', Validators.required);
@@ -16,9 +22,6 @@ export class AppComponent {
   constructor(public messageSocket: MessageSocketService) {}
 
   sendMessage() {
-    if (this.messageControl.untouched) {
-      this.messageControl.markAsTouched();
-    }
     if (this.messageControl.valid) {
       this.messageSocket.sendMessage(this.messageControl.value);
       this.messageControl.setValue('');
@@ -27,9 +30,6 @@ export class AppComponent {
   }
 
   joinChatRoom() {
-    if (this.joinNameControl.untouched) {
-      this.joinNameControl.markAsTouched();
-    }
     if (this.joinNameControl.valid) {
       this.messageSocket.joinChatRoom(this.joinNameControl.value);
     }

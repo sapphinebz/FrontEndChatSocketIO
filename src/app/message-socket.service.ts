@@ -26,11 +26,11 @@ interface SenderMessage {
 
 @Injectable()
 export class MessageSocketService implements OnDestroy {
-  private onIdentity = new Subject<{ name: string }>();
-  private onSendMessage = new Subject<{ message: string }>();
-  private onTyping = new Subject<void>();
-  private destroy$ = new AsyncSubject<void>();
-  private socket = io('http://localhost:3001');
+  onIdentity = new Subject<{ name: string }>();
+  onSendMessage = new Subject<{ message: string }>();
+  onTyping = new Subject<void>();
+  onDestroy$ = new AsyncSubject<void>();
+  socket = io('http://localhost:3001');
 
   private onIdentitiedUser$ = this.onIdentity.pipe(
     switchMap((event) =>
@@ -65,7 +65,7 @@ export class MessageSocketService implements OnDestroy {
 
   private effectSocketOnTyping() {
     this.socketOn<{ name: string; isTyping: boolean }>('onTyping')
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntil(this.onDestroy$))
       .subscribe((event) => {
         this.isTyping = event.isTyping;
         this.typingName = event.name;
@@ -80,7 +80,7 @@ export class MessageSocketService implements OnDestroy {
             message: event.message,
           });
         }),
-        takeUntil(this.destroy$)
+        takeUntil(this.onDestroy$)
       )
       .subscribe();
   }
@@ -93,7 +93,7 @@ export class MessageSocketService implements OnDestroy {
       .pipe(
         distinctUntilChanged(),
         switchMap((isTyping) => this.socketEmit('typing', { isTyping })),
-        takeUntil(this.destroy$)
+        takeUntil(this.onDestroy$)
       )
       .subscribe();
   }
@@ -143,7 +143,7 @@ export class MessageSocketService implements OnDestroy {
         source.pipe(
           filter((state) => state !== undefined),
           distinctUntilChanged(),
-          takeUntil(this.destroy$)
+          takeUntil(this.onDestroy$)
         ),
         { connector: () => new ReplaySubject(1), resetOnDisconnect: false }
       );
@@ -166,7 +166,7 @@ export class MessageSocketService implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }
